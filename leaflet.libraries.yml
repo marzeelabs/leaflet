@@ -1,0 +1,11 @@
+leaflet:
+  js:
+    /libraries/leaflet/leaflet.js: {}
+    js/leaflet.js: {}
+  css:
+    theme:
+      /libraries/leaflet/leaflet.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/jquery.once

@@ -1,74 +1,20 @@
 <?php
+
+use Drupal\Component\Utility\Html;
+
 /**
  * Implements hook_theme().
  */
-function leaflet_theme($existing, $type, $theme, $path) {
+function leaflet_theme() {
   return array(
     'leaflet_map' => array(
-      'arguments' => array('map_id' => NULL, 'height' => '400px'),
-      // When theme('leaflet_map'...) is called, the system will look for
-      // /leaflet/templates/leaflet_map.html.twig.
-      'template' => 'leaflet_map',
+      'variables' => array(
+        'map_id' => NULL,
+        'height' => '400px',
+      ),
+      'template' => 'leaflet-map',
     ),
   );
-}
-
-function leaflet_libraries_get_path($base) {
-  return module_exists('libraries') ? libraries_get_path($base) : "sites/all/libraries/$base";
-}
-
-/**
- * Implements hook_library_info().
- */
-function leaflet_library_info() {
-  $leaflet_lib_path = leaflet_libraries_get_path('leaflet');
-
-  // Not sure this format is right for D8
-  $libraries['leaflet'] = array(
-    'title' => 'Leaflet',
-    'website' => 'http://leaflet.cloudmade.com',
-    'version' => '0.6',
-    'js' => array(
-      array(
-        'type' => 'inline',
-        'data' => 'L_ROOT_URL = "' . base_path() . $leaflet_lib_path . '/";',
-        'group' => JS_LIBRARY,
-        'preprocess' => FALSE
-      ),
-      array(
-        'type' => 'file',
-        'data' => "$leaflet_lib_path/leaflet.js",
-        'group' => JS_LIBRARY,
-        'preprocess' => FALSE
-      ),
-    ),
-    'css' => array(
-      "$leaflet_lib_path/leaflet.css" => array(
-        'type' => 'file',
-        'media' => 'screen',
-      ),
-      "$leaflet_lib_path/leaflet.ie.css" => array(
-        'browsers' => array(
-          'IE' => 'lte IE 8',
-          '!IE' => FALSE,
-        ),
-      ),
-    ),
-  );
-
-  $libraries['leaflet-drupal'] = array(
-    'title' => 'Leaflet initialization',
-    'website' => 'http://drupal.org/project/leaflet',
-    'version' => VERSION,
-    'js' => array(
-      drupal_get_path('module', 'leaflet') . '/leaflet.drupal.js' => array(),
-    ),
-    'dependencies' => array(
-      array('leaflet', 'leaflet'),
-    ),
-  );
-
-  return $libraries;
 }
 
 /**
@@ -81,7 +27,7 @@ function leaflet_library_info() {
  * @return string map markup
  */
 function leaflet_render_map($map, $features = array(), $height = '400px') {
-  $map_id = drupal_html_id('leaflet_map');
+  $map_id = Html::getUniqueId('leaflet_map');
 
   // Allow map definitions to provide a default icon.
   if (isset($map['icon']['iconUrl'])) {
@@ -96,10 +42,27 @@ function leaflet_render_map($map, $features = array(), $height = '400px') {
     'map' => $map,
     'features' => $features,
   );
-  drupal_add_library('leaflet', 'leaflet-drupal');
-  drupal_add_js(array('leaflet' => array($settings)), 'setting');
+  //drupal_add_library('leaflet', 'leaflet-drupal');
+  //drupal_add_js(array('leaflet' => array($settings)), 'setting');
 
-  return theme('leaflet_map', array('map_id' => $map_id, 'height' => $height));
+  $render = [
+    '#theme' => 'leaflet_map',
+    '#map_id' => $map_id,
+    '#height' => $height,
+    '#attached' => [
+      'library' => [
+        'leaflet'
+      ]
+    ]
+  ];
+
+//  dsm($render);
+
+//  return drupal_render($render);
+
+  //return \Drupal::service('renderer')->renderPlain($render);
+
+  //return theme('leaflet_map', array('map_id' => $map_id, 'height' => $height));
 }
 
 /**
@@ -115,16 +78,16 @@ function leaflet_map_get_info($map = NULL) {
   $map_info = &$drupal_static_fast['leaflet_map_info'];
 
   if (empty($map_info)) {
-    if ($cached = cache()->get('leaflet_map_info')) {
-      $map_info = $cached->data;
+    if ($cache = \Drupal::cache()->get('leaflet_map_info')) {
+      $map_info = $cache->data;
     }
     else {
-      $map_info = module_invoke_all('leaflet_map_info');
+      $map_info = \Drupal::moduleHandler()->invokeAll('leaflet_map_info', array());
 
       // Let other modules alter the map info.
-      drupal_alter('leaflet_map_info', $map_info);
+      \Drupal::moduleHandler()->alter('leaflet_map_info', $map_info);
 
-      cache()->set('leaflet_map_info', $map_info);
+      \Drupal::cache()->set('leaflet_map_info', $map_info);
     }
   }
 
@@ -187,25 +150,23 @@ function leaflet_leaflet_map_info() {
  * @return array
  */
 function leaflet_process_geofield($items = array()) {
-
-  geophp_load();
-
-  if (!is_array($items)) {
-    $items = array($items);
-  }
+  // @todo check if we need geophp still
+//  geophp_load();
   $data = array();
+
   foreach ($items as $item) {
+
     // Auto-detect and parse the format (e.g. WKT, JSON etc)
-    if (!($geom = geoPHP::load(isset($item['wkt']) ? $item['wkt'] : $item))) {
-      continue;
-    }
-    $datum = array('type' => strtolower($geom->geometryType()));
+//    if (!($geom = geoPHP::load(isset($item['wkt']) ? $item['wkt'] : $item))) {
+//      continue;
+//    }
+    $datum = array('type' => strtolower($item->geo_type));
 
     switch ($datum['type']) {
       case 'point':
         $datum += array(
-          'lat' => $geom->getY(),
-          'lon' => $geom->getX(),
+          'lat' => $item->lat,
+          'lon' => $item->lon,
         );
         break;
 
@@ -265,6 +226,10 @@ function leaflet_process_geofield($items = array()) {
  * Implements hook_requirements().
  */
 function leaflet_requirements($phase) {
+
+  // @todo fix
+  return;
+
   $requirements = array();
   if ($phase != 'runtime') {
     return $requirements;
@@ -293,4 +258,3 @@ function leaflet_requirements($phase) {
 
   return $requirements;
 }
-
