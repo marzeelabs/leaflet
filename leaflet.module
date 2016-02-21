@@ -5,70 +5,16 @@
 function leaflet_theme($existing, $type, $theme, $path) {
   return array(
     'leaflet_map' => array(
-      'arguments' => array('map_id' => NULL, 'height' => '400px'),
+      'variables' => array(
+        'map_id' => NULL,
+        'height' => '400px',
+        'map' => array(),
+      ),
       // When theme('leaflet_map'...) is called, the system will look for
       // /leaflet/templates/leaflet_map.html.twig.
       'template' => 'leaflet_map',
     ),
   );
-}
-
-function leaflet_libraries_get_path($base) {
-  return module_exists('libraries') ? libraries_get_path($base) : "sites/all/libraries/$base";
-}
-
-/**
- * Implements hook_library_info().
- */
-function leaflet_library_info() {
-  $leaflet_lib_path = leaflet_libraries_get_path('leaflet');
-
-  // Not sure this format is right for D8
-  $libraries['leaflet'] = array(
-    'title' => 'Leaflet',
-    'website' => 'http://leaflet.cloudmade.com',
-    'version' => '0.6',
-    'js' => array(
-      array(
-        'type' => 'inline',
-        'data' => 'L_ROOT_URL = "' . base_path() . $leaflet_lib_path . '/";',
-        'group' => JS_LIBRARY,
-        'preprocess' => FALSE
-      ),
-      array(
-        'type' => 'file',
-        'data' => "$leaflet_lib_path/leaflet.js",
-        'group' => JS_LIBRARY,
-        'preprocess' => FALSE
-      ),
-    ),
-    'css' => array(
-      "$leaflet_lib_path/leaflet.css" => array(
-        'type' => 'file',
-        'media' => 'screen',
-      ),
-      "$leaflet_lib_path/leaflet.ie.css" => array(
-        'browsers' => array(
-          'IE' => 'lte IE 8',
-          '!IE' => FALSE,
-        ),
-      ),
-    ),
-  );
-
-  $libraries['leaflet-drupal'] = array(
-    'title' => 'Leaflet initialization',
-    'website' => 'http://drupal.org/project/leaflet',
-    'version' => VERSION,
-    'js' => array(
-      drupal_get_path('module', 'leaflet') . '/leaflet.drupal.js' => array(),
-    ),
-    'dependencies' => array(
-      array('leaflet', 'leaflet'),
-    ),
-  );
-
-  return $libraries;
 }
 
 /**
@@ -78,32 +24,33 @@ function leaflet_library_info() {
  * @param array $features
  * @param string $height
  *
- * @return string map markup
+ * @return array render array
  */
 function leaflet_render_map($map, $features = array(), $height = '400px') {
-  $map_id = drupal_html_id('leaflet_map');
+  $map_id = Drupal\Component\Utility\Html::getUniqueId('leaflet_map');
 
-  // Allow map definitions to provide a default icon.
-  if (isset($map['icon']['iconUrl'])) {
-    foreach ($features as &$feature) {
-      if (!isset($feature['icon'])) {
-        $feature['icon'] = $map['icon'];
-      }
-    }
-  }
-  $settings[0] = array(
+  $settings[$map_id] = array(
     'mapId' => $map_id,
     'map' => $map,
-    'features' => $features,
+    // JS only works with arrays, make sure we have one with numeric keys.
+    'features' => array_values($features),
   );
-  drupal_add_library('leaflet', 'leaflet-drupal');
-  drupal_add_js(array('leaflet' => array($settings)), 'setting');
-
-  return theme('leaflet_map', array('map_id' => $map_id, 'height' => $height));
+  return array(
+    '#theme' => 'leaflet_map',
+    '#map_id' => $map_id,
+    '#height' => $height,
+    '#map' => $map,
+    '#attached' => array(
+      'library' => array('leaflet/leaflet-drupal'),
+      'drupalSettings' => array(
+        'leaflet' => $settings,
+      ),
+    ),
+  );
 }
 
 /**
- * Get all avaialble Leaflet map definitions.
+ * Get all available Leaflet map definitions.
  *
  * @param string $map
  */
@@ -115,16 +62,16 @@ function leaflet_map_get_info($map = NULL) {
   $map_info = &$drupal_static_fast['leaflet_map_info'];
 
   if (empty($map_info)) {
-    if ($cached = cache()->get('leaflet_map_info')) {
+    if ($cached = Drupal::cache()->get('leaflet_map_info')) {
       $map_info = $cached->data;
     }
     else {
-      $map_info = module_invoke_all('leaflet_map_info');
+      $map_info = Drupal::moduleHandler()->invokeAll('leaflet_map_info');
 
       // Let other modules alter the map info.
-      drupal_alter('leaflet_map_info', $map_info);
+      Drupal::moduleHandler()->alter('leaflet_map_info', $map_info);
 
-      cache()->set('leaflet_map_info', $map_info);
+      Drupal::cache()->set('leaflet_map_info', $map_info);
     }
   }
 
@@ -144,33 +91,30 @@ function leaflet_map_get_info($map = NULL) {
 function leaflet_leaflet_map_info() {
   return array(
     'OSM Mapnik' =>
-    array(
-      'label' => 'OSM Mapnik',
-      'description' => t('Leaflet default map.'),
-      'settings' => array(
-        // 'zoom' => 18,
-        'minZoom' => 0,
-        'maxZoom' => 18,
-        'dragging' => TRUE,
-        'touchZoom' => TRUE,
-        'scrollWheelZoom' => TRUE,
-        'doubleClickZoom' => TRUE,
-        'zoomControl' => TRUE,
-        'attributionControl' => TRUE,
-        'trackResize' => TRUE,
-        'fadeAnimation' => TRUE,
-        'zoomAnimation' => TRUE,
-        'closePopupOnClick' => TRUE,
-      ),
-      'layers' => array(
-        'earth' => array(
-          'urlTemplate' => 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          'options' => array(
-            'attribution' => 'OSM Mapnik'
-          )
+      array(
+        'label' => 'OSM Mapnik',
+        'description' => t('Leaflet default map.'),
+        'settings' => array(
+          'dragging' => TRUE,
+          'touchZoom' => TRUE,
+          'scrollWheelZoom' => TRUE,
+          'doubleClickZoom' => TRUE,
+          'zoomControl' => TRUE,
+          'attributionControl' => TRUE,
+          'trackResize' => TRUE,
+          'fadeAnimation' => TRUE,
+          'zoomAnimation' => TRUE,
+          'closePopupOnClick' => TRUE,
+        ),
+        'layers' => array(
+          'earth' => array(
+            'urlTemplate' => 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            'options' => array(
+              'attribution' => 'OSM Mapnik'
+            )
+          ),
         ),
       ),
-    ),
   );
 }
 
@@ -269,26 +213,49 @@ function leaflet_requirements($phase) {
   if ($phase != 'runtime') {
     return $requirements;
   }
-  // Ensure js library is installed. Show number of maps avaialble.
-  if (file_exists(leaflet_libraries_get_path('leaflet') . '/leaflet.js')) {
-    $requirements['leaflet'] = array(
-      'title' => t('Leaflet library'),
-      'value' => t('Installed. @maps available.', array(
-        '@maps' => format_plural(count(leaflet_map_get_info()), 'One map', '@count maps'))),
-      'severity' => REQUIREMENT_OK,
-    );
+  $library = Drupal::service('library.discovery')
+    ->getLibraryByName('leaflet', 'leaflet');
+
+  $requirements['leaflet'] = array(
+    'title' => Drupal::translation()->translate('Leaflet library')
+  );
+  $maps_info = Drupal::translation()->translate('@maps available.', array(
+      '@maps' => Drupal::translation()
+        ->formatPlural(count(leaflet_map_get_info()), 'One map', '@count maps')
+    )
+  );
+
+  // Check the defined type of the leaflet.js file; if it is external then
+  // assume that we are using a CDN version.
+  if ($library['js'][0]['type'] == 'external') {
+    $requirements['leaflet']['value'] = Drupal::translation()
+        ->translate('Using CDN version @version.', array(
+          '@version' => $library['version']
+        )) . ' ' . $maps_info;
   }
+  // If leaflet.js is defined to be a local file, check that it exists and show
+  // an error if it does not exist.
   else {
-    $requirements['leaflet'] = array(
-      'title' => t('Leaflet library not found'),
-      'value' => t('The !leaflet javascript library was not found. Please !download it into the libraries folder. Also ensure that the library is named leaflet with a lower case "l".',
-        array(
-          '!leaflet' => l('leaflet', 'http://leaflet.cloudmade.com'),
-          '!download' => l('download', 'http://leaflet.cloudmade.com/download.html'),
-        )
-      ),
-      'severity' => REQUIREMENT_ERROR,
-    );
+    if (file_exists($library['js'][0]['data'])) {
+      $requirements['leaflet']['value'] = Drupal::translation()
+          ->translate('Leaflet @version library installed at @path.', array(
+            '@version' => $library['version'],
+            '@path' => $library['js'][0]['data'],
+          )) . ' ' . $maps_info;
+      $requirements['leaflet']['severity'] = REQUIREMENT_OK;
+    }
+    else {
+      $requirements['leaflet']['value'] = Drupal::translation()
+        ->translate('Leaflet @version library not found at @path. Please !download it to @directory, or undo your changes to the libraries registry to use the CDN version.',
+          array(
+            '@version' => $library['version'],
+            '@path' => $library['js'][0]['data'],
+            '@directory' => dirname($library['js'][0]['data']),
+            '!download' => Drupal::l('download', Drupal\Core\Url::fromUri($library['remote'])),
+          )
+        );
+      $requirements['leaflet']['severity'] = REQUIREMENT_ERROR;
+    }
   }
 
   return $requirements;
