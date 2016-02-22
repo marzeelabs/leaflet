@@ -17,3 +17,5 @@ leaflet-drupal:
       leaflet.drupal.js: {}
     dependencies:
       - leaflet/leaflet
+      - core/jquery
+      - core/drupal
