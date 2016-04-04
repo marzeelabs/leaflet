@@ -10,9 +10,6 @@ function leaflet_theme($existing, $type, $theme, $path) {
         'height' => '400px',
         'map' => array(),
       ),
-      // When theme('leaflet_map'...) is called, the system will look for
-      // /leaflet/templates/leaflet_map.html.twig.
-      'template' => 'leaflet_map',
     ),
   );
 }
