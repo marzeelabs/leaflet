@@ -129,8 +129,6 @@ function leaflet_leaflet_map_info() {
  */
 function leaflet_process_geofield($items = array()) {
 
-  geophp_load();
-
   if (!is_array($items)) {
     $items = array($items);
   }
