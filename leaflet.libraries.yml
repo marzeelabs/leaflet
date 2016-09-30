@@ -1,5 +1,5 @@
 leaflet:
-  remote: http://leaflet.cloudmade.com
+  remote: http://leafletjs.com/
   version: 0.7.7
   license:
     name: Leaflet-License
