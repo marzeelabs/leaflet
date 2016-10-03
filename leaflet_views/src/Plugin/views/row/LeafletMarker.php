@@ -108,7 +108,7 @@ class LeafletMarker extends RowPluginBase {
     // Add an option to render the entire entity using a view mode
     if ($this->entityTypeId) {
       $desc_options += array(
-        '#rendered_entity' => '<' . $this->t('Rendered !entity entity', array('!entity' => $this->entityTypeId)) . '>',
+        '#rendered_entity' => '<' . $this->t('Rendered @entity entity', array('@entity' => $this->entityTypeId)) . '>',
       );
     }
 

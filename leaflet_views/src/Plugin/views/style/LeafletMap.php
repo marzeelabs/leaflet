@@ -120,7 +120,7 @@ class LeafletMap extends StylePluginBase {
     // Add an option to render the entire entity using a view mode
     if ($this->entity_type) {
       $desc_options += array(
-        '#rendered_entity' => '<' . $this->t('!entity entity', array('!entity' => $this->entity_type)) . '>',
+        '#rendered_entity' => '<' . $this->t('@entity entity', array('@entity' => $this->entity_type)) . '>',
       );
     }
 
