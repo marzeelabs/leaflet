@@ -58,6 +58,9 @@ class MarkerDefault extends StylePluginBase {
           $this->view->row_index = $index;
           $set['rows'][$index] = $this->view->rowPlugin->render($row);
           $this->alterLeafletMarkerPoints($set['rows'][$index], $row);
+          if (!$set['rows'][$index]) {
+            unset($set['rows'][$index]);
+          }
         }
       }
       $set['features'] = array();
