@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains Drupal\leaflet_views\Plugin\views\style\Leaflet.
- */
 
 namespace Drupal\leaflet_views\Plugin\views\style;
 

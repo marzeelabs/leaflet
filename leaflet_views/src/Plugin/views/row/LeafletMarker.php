@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains Drupal\leaflet_views\Plugin\views\row\LeafletMarker.
- */
 
 namespace Drupal\leaflet_views\Plugin\views\row;
 

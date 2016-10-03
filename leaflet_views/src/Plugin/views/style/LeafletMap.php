@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\leaflet_views\Plugin\views\style\LeafletMap.
- */
-
 namespace Drupal\leaflet_views\Plugin\views\style;
 
 use Drupal\Component\Utility\UrlHelper;

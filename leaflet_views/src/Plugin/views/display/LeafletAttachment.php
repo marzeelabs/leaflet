@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains Drupal\leaflet_views\Plugin\views\display\LeafletDataAttachment.
- */
 
 namespace Drupal\leaflet_views\Plugin\views\display;
 

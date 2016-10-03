@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\leaflet\Plugin\Field\FieldFormatter\LeafletDefaultFormatter.
- */
-
 namespace Drupal\leaflet\Plugin\Field\FieldFormatter;
 
 use Drupal\Component\Utility\UrlHelper;
