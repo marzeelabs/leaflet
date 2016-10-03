@@ -212,20 +212,14 @@ class LeafletMap extends StylePluginBase {
 
     $form['icon']['iconSize']['x'] = array(
       '#title' => $this->t('Width'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => isset($this->options['icon']['iconSize']['x']) ? $this->options['icon']['iconSize']['x'] : '',
-      '#element_validate' => array('form_validate_number'),
     );
 
     $form['icon']['iconSize']['y'] = array(
       '#title' => $this->t('Height'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => isset($this->options['icon']['iconSize']['y']) ? $this->options['icon']['iconSize']['y'] : '',
-      '#element_validate' => array('form_validate_number'),
     );
 
     $form['icon']['iconAnchor'] = array(
@@ -237,20 +231,14 @@ class LeafletMap extends StylePluginBase {
 
     $form['icon']['iconAnchor']['x'] = array(
       '#title' => $this->t('X'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => isset($this->options['icon']['iconAnchor']['x']) ? $this->options['icon']['iconAnchor']['x'] : '',
-      '#element_validate' => array('form_validate_number'),
     );
 
     $form['icon']['iconAnchor']['y'] = array(
       '#title' => $this->t('Y'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => isset($this->options['icon']['iconAnchor']['y']) ? $this->options['icon']['iconAnchor']['y'] : '',
-      '#element_validate' => array('form_validate_number'),
     );
 
     $form['icon']['shadowAnchor'] = array(
@@ -261,19 +249,13 @@ class LeafletMap extends StylePluginBase {
     );
     $form['icon']['shadowAnchor']['x'] = array(
       '#title' => $this->t('X'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => isset($this->options['icon']['shadowAnchor']['x']) ? $this->options['icon']['shadowAnchor']['x'] : '',
-      '#element_validate' => array('form_validate_number'),
     );
     $form['icon']['shadowAnchor']['y'] = array(
       '#title' => $this->t('Y'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => isset($this->options['icon']['shadowAnchor']['y']) ? $this->options['icon']['shadowAnchor']['y'] : '',
-      '#element_validate' => array('form_validate_number'),
     );
 
     $form['icon']['popupAnchor'] = array(
@@ -285,20 +267,14 @@ class LeafletMap extends StylePluginBase {
 
     $form['icon']['popupAnchor']['x'] = array(
       '#title' => $this->t('X'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => isset($this->options['icon']['popupAnchor']['x']) ? $this->options['icon']['popupAnchor']['x'] : '',
-      '#element_validate' => array('form_validate_number'),
     );
 
     $form['icon']['popupAnchor']['y'] = array(
       '#title' => $this->t('Y'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => isset($this->options['icon']['popupAnchor']['y']) ? $this->options['icon']['popupAnchor']['y'] : '',
-      '#element_validate' => array('form_validate_number'),
     );
   }
 

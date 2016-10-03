@@ -95,10 +95,9 @@ class LeafletDefaultFormatter extends FormatterBase {
     );
     $elements['height'] = array(
       '#title' => $this->t('Map Height'),
-      '#type' => 'textfield',
+      '#type' => 'number',
       '#default_value' => $this->getSetting('height'),
       '#field_suffix' => $this->t('px'),
-      '#element_validate' => array('form_validate_number'),
     );
     $elements['popup'] = array(
       '#title' => $this->t('Popup'),
@@ -138,19 +137,13 @@ class LeafletDefaultFormatter extends FormatterBase {
     );
     $elements['icon']['icon_size']['x'] = array(
       '#title' => $this->t('Width'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => $icon['icon_size']['x'],
-      '#element_validate' => array('form_validate_number'),
     );
     $elements['icon']['icon_size']['y'] = array(
       '#title' => $this->t('Height'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => $icon['icon_size']['y'],
-      '#element_validate' => array('form_validate_number'),
     );
     $elements['icon']['icon_anchor'] = array(
       '#title' => $this->t('Icon Anchor'),
@@ -161,19 +154,13 @@ class LeafletDefaultFormatter extends FormatterBase {
     );
     $elements['icon']['icon_anchor']['x'] = array(
       '#title' => $this->t('X'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => $icon['icon_anchor']['x'],
-      '#element_validate' => array('form_validate_number'),
     );
     $elements['icon']['icon_anchor']['y'] = array(
       '#title' => $this->t('Y'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => $icon['icon_anchor']['y'],
-      '#element_validate' => array('form_validate_number'),
     );
     $elements['icon']['shadow_anchor'] = array(
       '#title' => $this->t('Shadow Anchor'),
@@ -183,19 +170,13 @@ class LeafletDefaultFormatter extends FormatterBase {
     );
     $elements['icon']['shadow_anchor']['x'] = array(
       '#title' => $this->t('X'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => $icon['shadow_anchor']['x'],
-      '#element_validate' => array('form_validate_number'),
     );
     $elements['icon']['shadow_anchor']['y'] = array(
       '#title' => $this->t('Y'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => $icon['shadow_anchor']['y'],
-      '#element_validate' => array('form_validate_number'),
     );
     $elements['icon']['popup_anchor'] = array(
       '#title' => $this->t('Popup Anchor'),
@@ -206,19 +187,13 @@ class LeafletDefaultFormatter extends FormatterBase {
     );
     $elements['icon']['popup_anchor']['x'] = array(
       '#title' => $this->t('X'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => $icon['popup_anchor']['x'],
-      '#element_validate' => array('form_validate_number'),
     );
     $elements['icon']['popup_anchor']['y'] = array(
       '#title' => $this->t('Y'),
-      '#type' => 'textfield',
-      '#maxlength' => 3,
-      '#size' => 3,
+      '#type' => 'number',
       '#default_value' => $icon['popup_anchor']['y'],
-      '#element_validate' => array('form_validate_number'),
     );
 
     return $elements;
