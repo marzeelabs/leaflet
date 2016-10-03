@@ -234,7 +234,7 @@
   };
 
   Drupal.Leaflet.prototype.create_icon = function (options) {
-    var icon = new L.Icon({iconUrl: options.icon_url});
+    var icon = new L.Icon({iconUrl: options.iconUrl});
 
     // override applicable marker defaults
     if (options.iconSize) {
